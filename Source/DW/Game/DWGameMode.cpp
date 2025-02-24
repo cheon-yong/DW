@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DWGameMode.h"
-#include "DWCharacter.h"
+#include "Character/DWCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADWGameMode::ADWGameMode()
