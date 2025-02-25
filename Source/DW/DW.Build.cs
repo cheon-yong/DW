@@ -21,7 +21,11 @@ public class DW : ModuleRules
 			"UMG", 
 			"NavigationSystem", 
 			"AIModule",
-			"GameplayTasks" 
+
+			// GAS
+			"GameplayAbilities",
+			"GameplayTasks",
+			"GameplayTags"
 		});
 	}
 }
