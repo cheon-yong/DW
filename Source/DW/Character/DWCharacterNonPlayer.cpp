@@ -31,17 +31,17 @@ void ADWCharacterNonPlayer::NPCMeshLoadCompleted()
 
 float ADWCharacterNonPlayer::GetAIPatrolRadius()
 {
-	return 800.0f;
+	return 500.0f;
 }
 
 float ADWCharacterNonPlayer::GetAIDetectRange()
 {
-	return 400.0f;
+	return 500.0f;
 }
 
 float ADWCharacterNonPlayer::GetAIAttackRange()
 {
-	return 0.0f;
+	return AttributeSet->GetAttackRange();
 }
 
 float ADWCharacterNonPlayer::GetAITurnSpeed()
