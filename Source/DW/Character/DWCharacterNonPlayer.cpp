@@ -2,6 +2,7 @@
 
 
 #include "Character/DWCharacterNonPlayer.h"
+#include "AbilitySystem/Abilities/DWGA_MonsterAttack.h"
 #include "AbilitySystem/Attributes/DWAttributeSet.h"
 
 ADWCharacterNonPlayer::ADWCharacterNonPlayer()
@@ -51,9 +52,14 @@ float ADWCharacterNonPlayer::GetAITurnSpeed()
 
 void ADWCharacterNonPlayer::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)
 {
+	OnAttackFinished = InOnAttackFinished;
 }
 
 void ADWCharacterNonPlayer::AttackByAI()
 {
-	//Attack();
+	if (ASC)
+	{
+		FGameplayAbilitySpec AbilitySpec(AttackAbility);
+		ASC->TryActivateAbility(AbilitySpec.Handle);
+	}
 }

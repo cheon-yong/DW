@@ -9,6 +9,7 @@
 
 #include "DWCharacterNonPlayer.generated.h"
 
+class UGameplayAbility;
 /**
  * 
  */
@@ -26,15 +27,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 protected:
-	//void SetDead() override;
-	void NPCMeshLoadCompleted();
-
-	UPROPERTY(config)
-	TArray<FSoftObjectPath> NPCMeshes;
-
-	TSharedPtr<FStreamableHandle> NPCMeshHandle;
-	// AI Section
-protected:
 	virtual float GetAIPatrolRadius() override;
 	virtual float GetAIDetectRange() override;
 	virtual float GetAIAttackRange() override;
@@ -44,5 +36,18 @@ protected:
 	virtual void AttackByAI() override;
 
 	FAICharacterAttackFinished OnAttackFinished;
+
+	//void SetDead() override;
+	void NPCMeshLoadCompleted();
+
+protected:
+	UPROPERTY(config)
+	TArray<FSoftObjectPath> NPCMeshes;
+
+	TSharedPtr<FStreamableHandle> NPCMeshHandle;
+	// AI Section
 	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS)
+	TSubclassOf<UGameplayAbility> AttackAbility;
 };

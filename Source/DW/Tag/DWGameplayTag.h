@@ -14,3 +14,4 @@
 #define DWTAG_EVENT_CHARACTER_WEAPONEQUIP FGameplayTag::RequestGameplayTag(FName("Event.Character.Weapon.Equip"))
 #define DWTAG_EVENT_CHARACTER_WEAPONUNEQUIP FGameplayTag::RequestGameplayTag(FName("Event.Character.Weapon.Unequip"))
 
+#define DWTAG_EVENT_MONSTER_ATTACK FGameplayTag::RequestGameplayTag(FName("Event.Monster.Attack"))

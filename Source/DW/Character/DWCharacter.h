@@ -28,10 +28,11 @@ class ADWCharacter : public ACharacter, public IAbilitySystemInterface
 public:
 	ADWCharacter();
 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
 protected:
 	virtual void BeginPlay();
 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	virtual void Attack();
 

@@ -4,6 +4,9 @@
 #include "AI/BTTask_Attack.h"
 #include "AIController.h"
 #include "Interface/DWCharacterAIInterface.h"
+#include <AbilitySystemComponent.h>
+#include <Character/DWCharacterNonPlayer.h>
+#include "Tag/DWGameplayTag.h"
 
 UBTTask_Attack::UBTTask_Attack()
 {
@@ -25,15 +28,28 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	FAICharacterAttackFinished OnAttackFinished;
-	OnAttackFinished.BindLambda(
-		[&]()
+	if (ADWCharacterNonPlayer* NPC = Cast<ADWCharacterNonPlayer>(ControllingPawn))
+	{
+		UAbilitySystemComponent* ASC = NPC->GetAbilitySystemComponent();
+		if (ASC)
 		{
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(DWTAG_EVENT_MONSTER_ATTACK);
+			ASC->TryActivateAbilitiesByTag(TagContainer);
+			return EBTNodeResult::Succeeded;
 		}
-	);
+	}
+	
 
-	AIPawn->SetAIAttackDelegate(OnAttackFinished);
-	AIPawn->AttackByAI();
+	//FAICharacterAttackFinished OnAttackFinished;
+	//OnAttackFinished.BindLambda(
+	//	[&]()
+	//	{
+	//		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	//	}
+	//);
+
+	//AIPawn->SetAIAttackDelegate(OnAttackFinished);
+	//AIPawn->AttackByAI();
 	return EBTNodeResult::InProgress;
 }
