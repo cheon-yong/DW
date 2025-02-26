@@ -13,8 +13,10 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-
+class UDWAttributeSet;
+class UGameplayEffect;
 class UAnimMontage;
+class UGameplayAbility;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -27,20 +29,32 @@ public:
 	ADWCharacter();
 
 protected:
-
-	// To add mapping context
 	virtual void BeginPlay();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	virtual void Attack();
 
+	virtual void InitializeDefaultAttributes();
+
+	virtual void InitializeDefaultAbilities();
+
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
+
 	UFUNCTION()
 	virtual void OnOutOfHealth();
 
 public:
-
 	UPROPERTY(BlueprintReadOnly, Category = GAS)
 	TObjectPtr<UAbilitySystemComponent> ASC;
+
+	UPROPERTY(BlueprintReadOnly, Category = GAS)
+	TObjectPtr<UDWAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = GAS)
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TArray<TSubclassOf<UGameplayAbility>> StartAbilities;
 };
 

@@ -38,6 +38,8 @@ public:
 
 	void AbilityInputReleased(int32 InputId);
 
+	virtual void InitializeDefaultAbilities() override;
+
 
 	FORCEINLINE virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 
@@ -53,9 +55,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ComboActionMontage;
-
-	UPROPERTY(EditAnywhere, Category = GAS)
-	TArray<TSubclassOf<UGameplayAbility>> StartAbilities;
 
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TMap<int32, TSubclassOf<UGameplayAbility>> StartInputAbilities;

@@ -2,9 +2,22 @@
 
 
 #include "Character/DWCharacterNonPlayer.h"
+#include "AbilitySystem/Attributes/DWAttributeSet.h"
 
 ADWCharacterNonPlayer::ADWCharacterNonPlayer()
 {
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	
+	AttributeSet = CreateDefaultSubobject<UDWAttributeSet>(TEXT("AttributeSet"));
+}
+
+void ADWCharacterNonPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ASC->InitAbilityActorInfo(this, this);
+	InitializeDefaultAbilities();
+	InitializeDefaultAttributes();
 }
 
 void ADWCharacterNonPlayer::PostInitializeComponents()

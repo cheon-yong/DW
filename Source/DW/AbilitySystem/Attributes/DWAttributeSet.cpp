@@ -12,6 +12,8 @@ UDWAttributeSet::UDWAttributeSet() :
 	MaxAttackRadius(150.0f),
 	AttackRate(30.0f),
 	MaxAttackRate(100.0f),
+	AttackSpeed(100.f),
+	MaxAttackSpeed(200.f),
 	MaxHealth(100.0f),
 	Damage(0.0f)
 {
@@ -42,8 +44,11 @@ bool UDWAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 	{
 		if (Data.EvaluatedData.Magnitude > 0.0f)
 		{
-			Data.EvaluatedData.Magnitude = 0.0f;
-			return false;
+			if (Data.Target.HasMatchingGameplayTag(DWTAG_CHARACTER_INVINSIBLE))
+			{
+				Data.EvaluatedData.Magnitude = 0.0f;
+				return false;
+			}
 		}
 	}
 

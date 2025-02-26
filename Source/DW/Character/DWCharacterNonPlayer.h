@@ -21,6 +21,8 @@ public:
 	ADWCharacterNonPlayer();
 
 protected:
+	virtual void BeginPlay() override;
+
 	virtual void PostInitializeComponents() override;
 
 protected:

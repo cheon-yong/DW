@@ -60,23 +60,12 @@ void ADWCharacterPlayer::PossessedBy(AController* NewController)
 	{
 		ASC = DWPS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(DWPS, this);
+		InitializeDefaultAttributes();
+		InitializeDefaultAbilities();	
 
 		if (const UDWAttributeSet* CurrentAttributeSet = ASC->GetSet<UDWAttributeSet>())
 		{
 			CurrentAttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
-		}
-
-		for (const auto& StartAbility : StartAbilities)
-		{
-			FGameplayAbilitySpec StartSpec(StartAbility);
-			ASC->GiveAbility(StartSpec);
-		}
-
-		for (const auto& StartInputAbility : StartInputAbilities)
-		{
-			FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
-			StartSpec.InputID = StartInputAbility.Key;
-			ASC->GiveAbility(StartSpec);
 		}
 	}
 }
@@ -148,6 +137,21 @@ void ADWCharacterPlayer::AbilityInputReleased(int32 InputId)
 		if (Spec->IsActive())
 		{
 			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
+}
+
+void ADWCharacterPlayer::InitializeDefaultAbilities()
+{
+	Super::InitializeDefaultAbilities();
+
+	if (ASC)
+	{
+		for (const auto& StartInputAbility : StartInputAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
+			StartSpec.InputID = StartInputAbility.Key;
+			ASC->GiveAbility(StartSpec);
 		}
 	}
 }

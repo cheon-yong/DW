@@ -34,6 +34,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, MaxAttackRadius);
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, AttackRate);
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, MaxAttackRate);
+	ATTRIBUTE_ACCESSORS(UDWAttributeSet, AttackSpeed);
+	ATTRIBUTE_ACCESSORS(UDWAttributeSet, MaxAttackSpeed);
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, Health);
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, MaxHealth);
 	ATTRIBUTE_ACCESSORS(UDWAttributeSet, Damage);
@@ -63,6 +65,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxAttackRate;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData AttackSpeed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxAttackSpeed;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
