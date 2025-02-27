@@ -25,7 +25,10 @@ public class DW : ModuleRules
 			// GAS
 			"GameplayAbilities",
 			"GameplayTasks",
-			"GameplayTags"
+			"GameplayTags",
+
+			// ModularGameplay
+			"ModularGameplay",
 		});
 	}
 }

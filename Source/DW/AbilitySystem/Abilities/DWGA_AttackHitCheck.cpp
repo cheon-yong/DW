@@ -60,7 +60,7 @@ void UDWGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 			FGameplayCueParameters CueParam;
 			CueParam.EffectContext = CueContextHandle;
 
-			TargetASC->ExecuteGameplayCue(DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT, CueParam);
+			//TargetASC->ExecuteGameplayCue(DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT, CueParam);
 		}
 
 		FGameplayEffectSpecHandle BuffEffectSpecHandle = MakeOutgoingGameplayEffectSpec(AttackBuffEffect);
@@ -83,7 +83,7 @@ void UDWGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 			FGameplayCueParameters CueParam;
 			CueParam.EffectContext = CueContextHandle;
 
-			SourceASC->ExecuteGameplayCue(DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT, CueParam);
+			//SourceASC->ExecuteGameplayCue(DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT, CueParam);
 		}
 	}
 

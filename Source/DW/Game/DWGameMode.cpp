@@ -3,6 +3,8 @@
 #include "DWGameMode.h"
 #include "Character/DWCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Tag/DWGameplayTag.h"
+#include "Game/SpawnMonsterData.h"
 
 ADWGameMode::ADWGameMode()
 {
@@ -12,4 +14,12 @@ ADWGameMode::ADWGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	GameStateTag = DWTAG_GAME_STATE_READY;
+}
+
+void ADWGameMode::SetGameStateTag(FGameplayTag NewStateTag)
+{
+	GameStateTag = NewStateTag;
+	OnGameStateChanged.Broadcast(NewStateTag);
 }
