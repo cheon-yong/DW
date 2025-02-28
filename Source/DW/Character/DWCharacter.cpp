@@ -3,6 +3,7 @@
 #include "Character/DWCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "AbilitySystemComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -60,5 +61,19 @@ void ADWCharacter::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffect
 
 void ADWCharacter::OnOutOfHealth()
 {
+	SetDead();
+}
 
+void ADWCharacter::SetDead()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	PlayDeadAnimation();
+	SetActorEnableCollision(false);
+}
+
+void ADWCharacter::PlayDeadAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.0f);
+	AnimInstance->Montage_Play(DeathMontage, 1.0f);
 }

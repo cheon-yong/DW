@@ -40,6 +40,8 @@ protected:
 	//void SetDead() override;
 	void NPCMeshLoadCompleted();
 
+	virtual void OnOutOfHealth() override;
+
 protected:
 	UPROPERTY(config)
 	TArray<FSoftObjectPath> NPCMeshes;

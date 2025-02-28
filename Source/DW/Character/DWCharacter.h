@@ -32,7 +32,6 @@ public:
 
 protected:
 	virtual void BeginPlay();
-
 	
 	virtual void Attack();
 
@@ -45,12 +44,19 @@ protected:
 	UFUNCTION()
 	virtual void OnOutOfHealth();
 
+	void SetDead();
+
+	void PlayDeadAnimation();
+
 public:
 	UPROPERTY(BlueprintReadOnly, Category = GAS)
 	TObjectPtr<UAbilitySystemComponent> ASC;
 
 	UPROPERTY(BlueprintReadOnly, Category = GAS)
 	TObjectPtr<UDWAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = GAS)
+	TObjectPtr<UAnimMontage> DeathMontage;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = GAS)
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;

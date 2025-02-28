@@ -156,6 +156,11 @@ void ADWCharacterPlayer::InitializeDefaultAbilities()
 	}
 }
 
+void ADWCharacterPlayer::OnOutOfHealth()
+{
+	Super::OnOutOfHealth();
+}
+
 void ADWCharacterPlayer::Attack()
 {
 	// Animation Setting

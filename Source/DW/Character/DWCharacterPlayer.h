@@ -40,6 +40,8 @@ public:
 
 	virtual void InitializeDefaultAbilities() override;
 
+	virtual void OnOutOfHealth() override;
+
 
 	FORCEINLINE virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 

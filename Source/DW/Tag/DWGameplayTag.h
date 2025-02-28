@@ -15,6 +15,7 @@
 		
 // GameplayCue
 #define DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.AttackHit"))
+#define DWTAG_GAMEPLAYCUE_CHARACTER_DAMAGETAKEN FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.DamageTaken"))
 		
 // Event
 // Event.Character

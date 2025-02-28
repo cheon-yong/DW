@@ -4,6 +4,10 @@
 #include "Character/DWCharacterNonPlayer.h"
 #include "AbilitySystem/Abilities/DWGA_MonsterAttack.h"
 #include "AbilitySystem/Attributes/DWAttributeSet.h"
+#include <Blueprint/AIBlueprintHelperLibrary.h>
+#include "AIController.h"
+#include "BrainComponent.h"
+#include <BehaviorTree/BehaviorTreeComponent.h>
 
 ADWCharacterNonPlayer::ADWCharacterNonPlayer()
 {
@@ -19,6 +23,11 @@ void ADWCharacterNonPlayer::BeginPlay()
 	ASC->InitAbilityActorInfo(this, this);
 	InitializeDefaultAbilities();
 	InitializeDefaultAttributes();
+
+	if (const UDWAttributeSet* CurrentAttributeSet = ASC->GetSet<UDWAttributeSet>())
+	{
+		CurrentAttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
+	}
 }
 
 void ADWCharacterNonPlayer::PostInitializeComponents()
@@ -28,6 +37,19 @@ void ADWCharacterNonPlayer::PostInitializeComponents()
 
 void ADWCharacterNonPlayer::NPCMeshLoadCompleted()
 {
+}
+
+void ADWCharacterNonPlayer::OnOutOfHealth()
+{
+	Super::OnOutOfHealth();
+
+	if (AAIController* AIController = UAIBlueprintHelperLibrary::GetAIController(this))
+	{
+		if (UBehaviorTreeComponent* BehaviorTreeComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
+		{
+			BehaviorTreeComp->StopTree();
+		}
+	}
 }
 
 float ADWCharacterNonPlayer::GetAIPatrolRadius()
