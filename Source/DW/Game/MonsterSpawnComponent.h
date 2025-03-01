@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterChanged, int32, MonsterNum
 class ADWMonsterSpawnPoint;
 class USpawnMonsterData;
 class ADWCharacterNonPlayer;
+struct FGameplayEffectSpec;
 
 /**
  * 
@@ -33,7 +34,14 @@ protected:
 
 	void StartSpawnMonster();
 
+	void StopAllAI();
+
+	void OnMonsterDead(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
+
 	void StopSpawnMonster();
+
+	UFUNCTION()
+	void DestroyMonster(ADWCharacterNonPlayer* Monster);
 
 	UFUNCTION()
 	void SpawnMonster(TSubclassOf<ADWCharacterNonPlayer> MonsterToSpawn);
@@ -52,4 +60,6 @@ protected:
 	TMap<FTimerHandle, FTimerDelegate> TimerDelegates;
 
 	TArray<TObjectPtr<ADWMonsterSpawnPoint>> SpawnPoints;
+
+	FTimerHandle CurrentTimerHandle;
 };

@@ -4,6 +4,8 @@
 #include "Engine/LocalPlayer.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayEffectExtension.h"
+#include "AbilitySystem/Attributes/DWAttributeSet.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -59,7 +61,7 @@ void ADWCharacter::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffect
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 
-void ADWCharacter::OnOutOfHealth()
+void ADWCharacter::OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
 {
 	SetDead();
 }

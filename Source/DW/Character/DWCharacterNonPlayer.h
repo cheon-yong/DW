@@ -21,6 +21,8 @@ class DW_API ADWCharacterNonPlayer : public ADWCharacter, public IDWCharacterAII
 public:
 	ADWCharacterNonPlayer();
 
+	void StopAI();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -40,7 +42,7 @@ protected:
 	//void SetDead() override;
 	void NPCMeshLoadCompleted();
 
-	virtual void OnOutOfHealth() override;
+	virtual void OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue) override;
 
 protected:
 	UPROPERTY(config)

@@ -13,14 +13,15 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-class UDWAttributeSet;
 class UGameplayEffect;
 class UAnimMontage;
 class UGameplayAbility;
+class UDWAttributeSet;
+struct FGameplayEffectSpec;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-UCLASS(config=Game)
+UCLASS(config=Game, Blueprintable)
 class ADWCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
@@ -29,6 +30,8 @@ public:
 	ADWCharacter();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UDWAttributeSet* GetSet() const { return AttributeSet; }
 
 protected:
 	virtual void BeginPlay();
@@ -41,8 +44,7 @@ protected:
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
 
-	UFUNCTION()
-	virtual void OnOutOfHealth();
+	virtual void OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
 
 	void SetDead();
 

@@ -18,8 +18,36 @@ ADWGameMode::ADWGameMode()
 	GameStateTag = DWTAG_GAME_STATE_READY;
 }
 
+void ADWGameMode::OnPlayerDead()
+{
+	GameOver();
+}
+
+void ADWGameMode::SetScore(int32 NewScore)
+{
+	Score = NewScore;
+	CheckClear();
+	OnScoreChanged.Broadcast(Score);
+}
+
 void ADWGameMode::SetGameStateTag(FGameplayTag NewStateTag)
 {
+	if (GameStateTag.MatchesTagExact(NewStateTag))
+		return;
+
 	GameStateTag = NewStateTag;
 	OnGameStateChanged.Broadcast(NewStateTag);
+}
+
+void ADWGameMode::GameOver()
+{
+	SetGameStateTag(DWTAG_GAME_STATE_DEFEATED);
+}
+
+void ADWGameMode::CheckClear()
+{
+	if (Score >= ClearScore)
+	{
+		SetGameStateTag(DWTAG_GAME_STATE_CLEAR);
+	}
 }

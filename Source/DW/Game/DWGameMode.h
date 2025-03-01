@@ -10,7 +10,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameStateChanged, FGameplayTag, StateTag);
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int32, NewScore);
 
 UCLASS(minimalapi)
 class ADWGameMode : public AGameMode
@@ -20,8 +20,20 @@ class ADWGameMode : public AGameMode
 public:
 	ADWGameMode();
 
+	void OnPlayerDead();
+
+	UFUNCTION(BlueprintCallable)
+	void SetScore(int32 NewScore);
+		
+	UFUNCTION(BlueprintCallable)
+	int32 GetScore() { return Score; }
+
 	UFUNCTION(BlueprintCallable)
 	void SetGameStateTag(FGameplayTag NewStateTag);
+
+	void GameOver();
+
+	void CheckClear();
 
 protected:
 
@@ -29,11 +41,18 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, Category = State);
 	FOnGameStateChanged OnGameStateChanged;
 
-protected:
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, Category = State);
+	FOnScoreChanged OnScoreChanged;
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGameplayTag GameStateTag;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 Score = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 ClearScore = 3;
 };
 
 

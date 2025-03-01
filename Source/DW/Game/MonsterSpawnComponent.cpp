@@ -8,9 +8,11 @@
 #include "Tag/DWGameplayTag.h"
 #include "Game/SpawnMonsterData.h"
 #include "Character/DWCharacterNonPlayer.h"
-#include <NavigationSystem.h>
+#include "NavigationSystem.h"
 #include "Components/SphereComponent.h"
-#include <Kismet/KismetMathLibrary.h>
+#include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystem/Attributes/DWAttributeSet.h"
+#include "GameplayEffectExtension.h"
 
 UMonsterSpawnComponent::UMonsterSpawnComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -42,10 +44,12 @@ void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
 	else if (NewStateTag == DWTAG_GAME_STATE_DEFEATED)
 	{
 		StopSpawnMonster();
+		StopAllAI();
 	}
 	else if (NewStateTag == DWTAG_GAME_STATE_CLEAR)
 	{
 		StopSpawnMonster();
+		StopAllAI();
 	}
 	else
 	{
@@ -76,14 +80,41 @@ void UMonsterSpawnComponent::StartSpawnMonster()
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
 		TimerDelegate.BindUFunction(this, FName("SpawnMonster"), MonsterData.Monster);
-
-		TimerDelegates.Add(TimerHandle, TimerDelegate);
 		GetWorldTimerManager().SetTimer(
 			TimerHandle,
 			TimerDelegate,
 			MonsterData.SpawnInterval,
 			true
 		);
+
+		TimerDelegates.Add(TimerHandle, TimerDelegate);
+	}
+}
+
+void UMonsterSpawnComponent::StopAllAI()
+{
+	for (ADWCharacterNonPlayer* Monster : Monsters)
+	{
+		Monster->StopAI();
+	}
+}
+
+
+void UMonsterSpawnComponent::OnMonsterDead(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
+{
+	if (ADWCharacterNonPlayer* Monster = Cast<ADWCharacterNonPlayer>(Target))
+	{
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindUFunction(this, FName("DestroyMonster"), Monster);
+		GetWorldTimerManager().SetTimer(
+			TimerHandle, 
+			TimerDelegate,
+			1.0f,
+			false,
+			1.2f
+		);
+
 	}
 }
 
@@ -99,6 +130,21 @@ void UMonsterSpawnComponent::StopSpawnMonster()
 	TimerDelegates.Empty();
 }
 
+void UMonsterSpawnComponent::DestroyMonster(ADWCharacterNonPlayer* Monster)
+{
+	if (Monster != nullptr)
+	{
+		Monsters.Remove(Monster);
+		Monster->Destroy();
+		OnMonsterChanged.Broadcast(Monsters.Num());
+		if (ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode()))
+		{
+			int32 CurrentScore = GameMode->GetScore();
+			GameMode->SetScore(CurrentScore + 1);
+		}
+	}
+}
+
 void UMonsterSpawnComponent::SpawnMonster(TSubclassOf<ADWCharacterNonPlayer> MonsterToSpawn)
 {
 	int32 RandomIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
@@ -111,10 +157,10 @@ void UMonsterSpawnComponent::SpawnMonster(TSubclassOf<ADWCharacterNonPlayer> Mon
 	UNavigationSystemV1::GetNavigationSystem(GetWorld())->GetRandomReachablePointInRadius(Location, Radius, NavLocation);
 	FTransform SpawnTransform = UKismetMathLibrary::MakeTransform(NavLocation, UKismetMathLibrary::FindLookAtRotation(NavLocation, Location));
 
-
 	ADWCharacterNonPlayer* NewActor = GetWorld()->SpawnActorDeferred<ADWCharacterNonPlayer>(MonsterToSpawn, SpawnTransform);
+	NewActor->GetSet()->OnOutOfHealth.AddUObject(this, &ThisClass::OnMonsterDead);
 	NewActor->FinishSpawning(FTransform::Identity, /*bIsDefaultTransform=*/ true);
-
+	
 	Monsters.Add(NewActor);
 	OnMonsterChanged.Broadcast(Monsters.Num());
 }

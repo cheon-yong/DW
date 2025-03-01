@@ -18,6 +18,9 @@ UDWAttributeSet::UDWAttributeSet() :
 	Damage(0.0f)
 {
 	InitHealth(GetMaxHealth());
+
+	MaxHealthBeforeAttributeChange = 0.0f;
+	HealthBeforeAttributeChange = 0.0f;
 }
 
 void UDWAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -40,6 +43,8 @@ bool UDWAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 		return false;
 	}
 
+	// TODO : Imune Damage Check 
+
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
 		if (Data.EvaluatedData.Magnitude > 0.0f)
@@ -52,6 +57,9 @@ bool UDWAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 		}
 	}
 
+	HealthBeforeAttributeChange = GetHealth();
+	MaxHealthBeforeAttributeChange = GetMaxHealth();
+
 	return true;
 }
 
@@ -60,6 +68,13 @@ void UDWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	Super::PostGameplayEffectExecute(Data);
 
 	float MinimumHealth = 0.0f;
+
+	// TODO : Imune Damage Check 
+
+	const FGameplayEffectContextHandle& EffectContext = Data.EffectSpec.GetEffectContext();
+	AActor* Target = GetOwningActor();
+	AActor* Instigator = EffectContext.GetOriginalInstigator();
+	AActor* Causer = EffectContext.GetEffectCauser();
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
@@ -70,11 +85,29 @@ void UDWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetMaxHealth()));
 		SetDamage(0.0f);
 	}
+	//else if (Data.EvaluatedData.Attribute == GetHealingAttribute()) // TODO : Heal
+	else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), MinimumHealth, GetMaxHealth()));
+	}
+	else if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+	{
+		// TODO clamp current health?
+
+		// Notify on any requested max health changes
+		OnMaxHealthChanged.Broadcast(Target, Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, MaxHealthBeforeAttributeChange, GetMaxHealth());
+	}
+
+	// If health has actually changed activate callbacks
+	if (GetHealth() != HealthBeforeAttributeChange)
+	{
+		OnHealthChanged.Broadcast(Target, Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, HealthBeforeAttributeChange, GetHealth());
+	}
 
 	if ((GetHealth() <= 0.0f) && !bOutOfHealth)
 	{
 		Data.Target.AddLooseGameplayTag(DWTAG_CHARACTER_ISDEAD);
-		OnOutOfHealth.Broadcast();
+		OnOutOfHealth.Broadcast(Target, Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, HealthBeforeAttributeChange, GetHealth());
 	}
 
 	bOutOfHealth = (GetHealth() <= 0.0f);

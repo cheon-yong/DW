@@ -13,6 +13,7 @@
 #include "Player/DWPlayerState.h"
 #include "AbilitySystem/Attributes/DWAttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "Game/DWGameMode.h"
 
 ADWCharacterPlayer::ADWCharacterPlayer()
 {
@@ -65,7 +66,7 @@ void ADWCharacterPlayer::PossessedBy(AController* NewController)
 
 		if (const UDWAttributeSet* CurrentAttributeSet = ASC->GetSet<UDWAttributeSet>())
 		{
-			CurrentAttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
+			CurrentAttributeSet->OnOutOfHealth.AddUObject(this, &ThisClass::OnOutOfHealth);
 		}
 	}
 }
@@ -156,9 +157,21 @@ void ADWCharacterPlayer::InitializeDefaultAbilities()
 	}
 }
 
-void ADWCharacterPlayer::OnOutOfHealth()
+void ADWCharacterPlayer::OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
 {
-	Super::OnOutOfHealth();
+	Super::OnOutOfHealth(Target, DamageInstigator, DamageCauser, DamageEffectSpec, DamageMagnitude, OldValue, NewValue);
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+
+		ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->OnPlayerDead();
+		}
+	}
 }
 
 void ADWCharacterPlayer::Attack()

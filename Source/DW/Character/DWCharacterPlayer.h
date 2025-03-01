@@ -40,8 +40,7 @@ public:
 
 	virtual void InitializeDefaultAbilities() override;
 
-	virtual void OnOutOfHealth() override;
-
+	virtual void OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue) override;
 
 	FORCEINLINE virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 

@@ -26,7 +26,7 @@ void ADWCharacterNonPlayer::BeginPlay()
 
 	if (const UDWAttributeSet* CurrentAttributeSet = ASC->GetSet<UDWAttributeSet>())
 	{
-		CurrentAttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
+		CurrentAttributeSet->OnOutOfHealth.AddUObject(this, &ThisClass::OnOutOfHealth);
 	}
 }
 
@@ -39,10 +39,15 @@ void ADWCharacterNonPlayer::NPCMeshLoadCompleted()
 {
 }
 
-void ADWCharacterNonPlayer::OnOutOfHealth()
+void ADWCharacterNonPlayer::OnOutOfHealth(AActor* Target, AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
 {
-	Super::OnOutOfHealth();
+	Super::OnOutOfHealth(Target, DamageInstigator, DamageCauser, DamageEffectSpec, DamageMagnitude, OldValue, NewValue);
 
+	StopAI();
+}
+
+void ADWCharacterNonPlayer::StopAI()
+{
 	if (AAIController* AIController = UAIBlueprintHelperLibrary::GetAIController(this))
 	{
 		if (UBehaviorTreeComponent* BehaviorTreeComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
@@ -51,6 +56,7 @@ void ADWCharacterNonPlayer::OnOutOfHealth()
 		}
 	}
 }
+
 
 float ADWCharacterNonPlayer::GetAIPatrolRadius()
 {
