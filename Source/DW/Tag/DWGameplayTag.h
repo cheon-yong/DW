@@ -14,6 +14,7 @@
 #define DWTAG_CHARACTER_INVINSIBLE FGameplayTag::RequestGameplayTag(FName("Character.State.Invinsible"))
 		
 // GameplayCue
+#define DWTAG_GAMEPLAYCUE_CHARACTER_ATTACK FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.Attack"))
 #define DWTAG_GAMEPLAYCUE_CHARACTER_ATTACKHIT FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.AttackHit"))
 #define DWTAG_GAMEPLAYCUE_CHARACTER_DAMAGETAKEN FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.DamageTaken"))
 		

@@ -58,7 +58,7 @@ protected:
 	TSet<TObjectPtr<ADWCharacterNonPlayer>> Monsters;
 
 	TMap<FTimerHandle, FTimerDelegate> TimerDelegates;
-
+	
 	TArray<TObjectPtr<ADWMonsterSpawnPoint>> SpawnPoints;
 
 	FTimerHandle CurrentTimerHandle;

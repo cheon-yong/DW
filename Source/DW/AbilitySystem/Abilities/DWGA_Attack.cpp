@@ -6,6 +6,9 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Character/DWComboActionData.h"
+#include "Tag/DWGameplayTag.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 UDWGA_Attack::UDWGA_Attack()
 {
@@ -18,13 +21,22 @@ void UDWGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	ADWCharacterPlayer* DWCharacter = CastChecked<ADWCharacterPlayer>(ActorInfo->AvatarActor.Get());
 	CurrentComboData = DWCharacter->GetComboActionData();
-	DWCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	DWCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);	
 
-	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), DWCharacter->GetComboActionMontage(), 1.0f, GetNextSection());
+	// PlayAbilityTask
+	AttackMontage = DWCharacter->GetComboActionMontage();
+	FName NextSection = GetNextSection();
+	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), AttackMontage, 1.0f, NextSection);
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UDWGA_Attack::OnCompleteCallback);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UDWGA_Attack::OnInterruptedCallback);
 	PlayAttackTask->ReadyForActivation();
 
+	// Attack Effect
+	int32 SectionIndex = AttackMontage->GetSectionIndex(NextSection);
+	float LifeTime = AttackMontage->GetSectionLength(SectionIndex);
+
+
+	ExecuteGameplayCue(LifeTime, ActorInfo->AvatarActor.Get());
 	StartComboTimer();
 }
 
@@ -55,6 +67,15 @@ void UDWGA_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 	CurrentComboData = nullptr;
 	CurrentCombo = 0;
 	HasNextComboInput = false;
+}
+
+void UDWGA_Attack::ExecuteGameplayCue(float LifeTime, AActor* Instigator)
+{
+	FGameplayCueParameters CueParam;
+	CueParam.RawMagnitude = LifeTime;
+	CueParam.Instigator = Instigator;
+
+	CurrentActorInfo->AbilitySystemComponent->ExecuteGameplayCue(GameplayCueTag, CueParam);
 }
 
 void UDWGA_Attack::OnCompleteCallback()
@@ -95,7 +116,14 @@ void UDWGA_Attack::CheckComboInput()
 	ComboTimerHandle.Invalidate();
 	if (HasNextComboInput)
 	{
-		MontageJumpToSection(GetNextSection());
+		FName NextSection = GetNextSection();
+		MontageJumpToSection(NextSection);
+
+		int32 SectionIndex = AttackMontage->GetSectionIndex(NextSection);
+		float LifeTime = AttackMontage->GetSectionLength(SectionIndex);
+
+		ExecuteGameplayCue(LifeTime, CurrentActorInfo->AvatarActor.Get());
+
 		StartComboTimer();
 		HasNextComboInput = false;
 	}

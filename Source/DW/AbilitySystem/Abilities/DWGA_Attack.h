@@ -22,6 +22,8 @@ public:
 	virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
+	void ExecuteGameplayCue(float LifeTime, AActor* Instigator);
+
 protected:
 	UFUNCTION()
 	void OnCompleteCallback();
@@ -34,8 +36,14 @@ protected:
 	void CheckComboInput();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "GameplayCue"))
+	FGameplayTag GameplayCueTag;
+
 	UPROPERTY()
 	TObjectPtr<class UDWComboActionData> CurrentComboData;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> AttackMontage;
 
 	uint8 CurrentCombo = 0;
 	FTimerHandle ComboTimerHandle;
