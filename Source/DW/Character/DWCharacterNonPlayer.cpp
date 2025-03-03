@@ -28,6 +28,11 @@ void ADWCharacterNonPlayer::BeginPlay()
 	{
 		CurrentAttributeSet->OnOutOfHealth.AddUObject(this, &ThisClass::OnOutOfHealth);
 	}
+
+	FGameplayCueParameters CueParams;
+	CueParams.Instigator = this;
+	CueParams.RawMagnitude = CueTime;
+	ASC->ExecuteGameplayCue(SpawnTag, CueParams);
 }
 
 void ADWCharacterNonPlayer::PostInitializeComponents()

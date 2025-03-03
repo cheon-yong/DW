@@ -68,6 +68,11 @@ void ADWCharacterPlayer::PossessedBy(AController* NewController)
 		{
 			CurrentAttributeSet->OnOutOfHealth.AddUObject(this, &ThisClass::OnOutOfHealth);
 		}
+
+		FGameplayCueParameters CueParams;
+		CueParams.Instigator = this;
+		CueParams.RawMagnitude = CueTime;
+		ASC->ExecuteGameplayCue(SpawnTag, CueParams);
 	}
 }
 

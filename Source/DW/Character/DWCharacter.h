@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "DWCharacter.generated.h"
 
 class USpringArmComponent;
@@ -18,6 +19,7 @@ class UAnimMontage;
 class UGameplayAbility;
 class UDWAttributeSet;
 struct FGameplayEffectSpec;
+struct FGameplayTag;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -65,5 +67,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TArray<TSubclassOf<UGameplayAbility>> StartAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (Categories="GameplayCue"))
+	FGameplayTag SpawnTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS)
+	float CueTime = 0.f;
 };
 
