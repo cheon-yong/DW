@@ -26,7 +26,7 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnStateChanged, UQuestTask*/* Task */, E
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class DW_API UQuestTask : public UObject
 {
 	GENERATED_BODY()
@@ -35,7 +35,17 @@ public:
 	void Setup(UQuestDefinition* InQuest);
 
 	void Start();
+
+	void End();
+
+	void ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount);
+
+	void SetSuccessCount(int32 SuccessCount);
+
+	void SetTaskState(ETaskState NewState);
 	
+	bool IsTarget(FGameplayTag InCategoryTag, UQuestTaskTarget* InTaskTarget);
+
 public:
 	FOnSuccessChanged OnSuccessChanged;
 	FOnStateChanged OnStateChanged;
@@ -54,5 +64,7 @@ protected:
 	TArray<TObjectPtr<UQuestTaskTarget>> TaskTargets;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)
-	ETaskState QuestState = ETaskState::Inactive;
+	ETaskState TaskState = ETaskState::Inactive;
+
+	int32 CurrentCount = 0;
 };

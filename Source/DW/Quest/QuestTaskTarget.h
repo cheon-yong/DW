@@ -2,16 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "QuestTaskTarget.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, Const, Abstract)
 class DW_API UQuestTaskTarget : public UObject
 {
 	GENERATED_BODY()
+	
+public:
+	bool IsEqual(UObject* Object) PURE_VIRTUAL(UQuestTaskAction::IsEqual, return false;);
 	
 };

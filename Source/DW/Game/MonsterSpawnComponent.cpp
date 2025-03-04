@@ -13,6 +13,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "AbilitySystem/Attributes/DWAttributeSet.h"
 #include "GameplayEffectExtension.h"
+#include "Game/DWStageData.h"
 
 UMonsterSpawnComponent::UMonsterSpawnComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -35,7 +36,7 @@ void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
 {
 	if (NewStateTag == DWTAG_GAME_STATE_READY)
 	{
-
+		LoadSpawnMonsterData();
 	}
 	else if (NewStateTag == DWTAG_GAME_STATE_PLAYING)
 	{
@@ -57,6 +58,11 @@ void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
 	}
 }
 
+void UMonsterSpawnComponent::SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData)
+{
+	SpawnMonsterData = InSpawnMonsterData;
+}
+
 void UMonsterSpawnComponent::FindAllSpawnPoints()
 {
 	if (UWorld* World = GetWorld())
@@ -69,6 +75,14 @@ void UMonsterSpawnComponent::FindAllSpawnPoints()
 				SpawnPoints.Emplace(SpawnPoint);
 			}
 		}
+	}
+}
+
+void UMonsterSpawnComponent::LoadSpawnMonsterData()
+{
+	if (ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		SpawnMonsterData = GameMode->GetCurrentStageData().MonsterData;
 	}
 }
 
@@ -164,3 +178,4 @@ void UMonsterSpawnComponent::SpawnMonster(TSubclassOf<ADWCharacterNonPlayer> Mon
 	Monsters.Add(NewActor);
 	OnMonsterChanged.Broadcast(Monsters.Num());
 }
+	

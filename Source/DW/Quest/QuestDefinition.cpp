@@ -8,10 +8,17 @@
 
 void UQuestDefinition::Setup()
 {
-	for (UQuestTask* Task : QuestTasks)
+	// Create Instances
+	for (TSubclassOf<UQuestTask> Task : QuestTaskClass)
 	{
-		Task->Setup(this);
-		Task->OnSuccessChanged.AddUObject(this, &ThisClass::OnSuccessChanged);
+		UQuestTask* QuestTask = NewObject<UQuestTask>(Task);
+		QuestTasks.Add(QuestTask);
+	}
+
+	for (UQuestTask* QuestTask : QuestTasks)
+	{
+		QuestTask->Setup(this);
+		QuestTask->OnSuccessChanged.AddUObject(this, &ThisClass::OnSuccessChanged);
 	}
 
 	QuestState = EQuestState::Running;
@@ -20,6 +27,12 @@ void UQuestDefinition::Setup()
 
 void UQuestDefinition::ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount)
 {
+	if (QuestState != EQuestState::Running	)
+	{
+		return;
+	}
+
+	//QuestTasks[CurrentIndex]->ReceiveReport(CategoryTag, TaskTarget, SuccessCount);
 }
 
 void UQuestDefinition::OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess)

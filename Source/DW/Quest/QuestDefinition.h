@@ -55,10 +55,13 @@ public:
 	FString QuestDescription;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
+	TArray<TSubclassOf<UQuestTask>> QuestTaskClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)
 	TArray<TObjectPtr<UQuestTask>> QuestTasks;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
-	TArray<TObjectPtr<UQuestReward>> QuestRewards;
+	TArray<TSubclassOf<UQuestReward>> QuestRewards;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)
 	EQuestState QuestState = EQuestState::Inactive;

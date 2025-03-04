@@ -21,7 +21,6 @@ class DW_API UMonsterSpawnComponent : public UGameStateComponent
 	GENERATED_BODY()
 	
 public:
-
 	UMonsterSpawnComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void BeginPlay() override;
@@ -29,8 +28,12 @@ public:
 	UFUNCTION()
 	void OnGameStateChange(FGameplayTag NewStateTag);
 
+	void SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData);
+
 protected:
 	void FindAllSpawnPoints();
+
+	void LoadSpawnMonsterData();
 
 	void StartSpawnMonster();
 
@@ -51,7 +54,7 @@ public:
 	FOnMonsterChanged OnMonsterChanged;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Data)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Data)
 	TObjectPtr<USpawnMonsterData> SpawnMonsterData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State)

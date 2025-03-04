@@ -5,6 +5,9 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Tag/DWGameplayTag.h"
 #include "Game/SpawnMonsterData.h"
+#include "Game/DWStageData.h"
+#include "Game/DWGameState.h"
+#include "Game/MonsterSpawnComponent.h"
 
 ADWGameMode::ADWGameMode()
 {
@@ -21,6 +24,11 @@ ADWGameMode::ADWGameMode()
 void ADWGameMode::OnPlayerDead()
 {
 	GameOver();
+}
+
+const FStageData& ADWGameMode::GetCurrentStageData()
+{
+	return DWStageData->StageDatas[CurrentStageIndex];
 }
 
 void ADWGameMode::SetScore(int32 NewScore)
@@ -50,4 +58,14 @@ void ADWGameMode::CheckClear()
 	{
 		SetGameStateTag(DWTAG_GAME_STATE_CLEAR);
 	}
+}
+
+void ADWGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+}
+
+void ADWGameMode::StartPlay()
+{
+	SetGameStateTag(DWTAG_GAME_STATE_READY);
 }
