@@ -5,22 +5,28 @@
 #include "Quest/QuestDefinition.h"
 #include "Quest/QuestTaskTarget.h"
 
-void UQuestManagerSubsystem::RegisterQuest(UQuestDefinition* InQuestDefinition)
+void UQuestManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	InQuestDefinition->OnCompleted.AddDynamic(this, &ThisClass::OnQuestCompleted);
-	InQuestDefinition->OnCanceled.AddDynamic(this, &ThisClass::OnQuestCanceled);
-
-	Quests.Emplace(InQuestDefinition);
-
-	InQuestDefinition->Setup();
-	OnQuestRegistered.Broadcast(InQuestDefinition);
 }
 
-void UQuestManagerSubsystem::ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount)
+void UQuestManagerSubsystem::RegisterQuest(TSubclassOf<UQuestDefinition> InQuestDefinition)
+{
+	UQuestDefinition* Quest = NewObject<UQuestDefinition>(this, InQuestDefinition);
+
+	Quest->OnCompleted.AddDynamic(this, &ThisClass::OnQuestCompleted);
+	Quest->OnCanceled.AddDynamic(this, &ThisClass::OnQuestCanceled);
+
+	Quests.Emplace(Quest);
+
+	Quest->Setup();
+	OnQuestRegistered.Broadcast(Quest);
+}
+
+void UQuestManagerSubsystem::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount)
 {
 	for (UQuestDefinition* Quest : Quests)
 	{
-		Quest->ReceiveReport(CategoryTag, TaskTarget, SuccessCount);
+		Quest->ReceiveReport(CategoryClass, TaskTarget, SuccessCount);
 	}
 }
 

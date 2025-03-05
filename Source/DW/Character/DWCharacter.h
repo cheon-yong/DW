@@ -21,6 +21,8 @@ class UDWAttributeSet;
 struct FGameplayEffectSpec;
 struct FGameplayTag;
 
+class UQuestDefinition;
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game, Blueprintable)
@@ -73,5 +75,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS)
 	float CueTime = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Quest)
+	TSubclassOf<UQuestDefinition> TestQuest;
 };
 

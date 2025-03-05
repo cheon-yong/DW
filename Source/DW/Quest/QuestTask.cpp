@@ -2,6 +2,7 @@
 
 
 #include "Quest/QuestTask.h"
+#include "Quest/Category/QuestCategory.h"
 #include "Quest/QuestTaskAction.h"
 #include "Quest/QuestTaskTarget.h"
 
@@ -21,9 +22,9 @@ void UQuestTask::End()
 	OnSuccessChanged.Clear();
 }
 
-void UQuestTask::ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount)
+void UQuestTask::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount)
 {
-	if (IsTarget(CategoryTag, TaskTarget))
+	if (IsTarget(CategoryClass, TaskTarget))
 	{
 		SetSuccessCount(SuccessCount);
 	}
@@ -31,7 +32,7 @@ void UQuestTask::ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskT
 
 void UQuestTask::SetSuccessCount(int32 SuccessCount)
 {
-	int32 NewCount = TaskAction->Run(this, CurrentCount, SuccessCount);
+	int32 NewCount = TaskAction.GetDefaultObject()->Run(this, CurrentCount, SuccessCount);
 }
 
 void UQuestTask::SetTaskState(ETaskState NewState)
@@ -42,22 +43,25 @@ void UQuestTask::SetTaskState(ETaskState NewState)
 	OnStateChanged.Broadcast(this, TaskState, PrevState);
 }
 
-bool UQuestTask::IsTarget(FGameplayTag InCategoryTag, UQuestTaskTarget* InTaskTarget)
+bool UQuestTask::IsTarget(TSubclassOf<UQuestCategory> InCategory, UObject* InTaskTarget)
 {
-	bool IsSameCategory = QuestCategory.MatchesTagExact(InCategoryTag);
+	//bool IsSameCategory = QuestCategory.MatchesTagExact(InCategoryTag);
+
+	
+	bool IsSameCategory = true;
 	if (IsSameCategory == false)
 	{
 		return false;
 	}
 		
 	bool IsTarget = true;
-	for (UQuestTaskTarget* TaskTarget : TaskTargets)
+	for (UObject* TaskTarget : TaskTargets)
 	{
-		if (!TaskTarget->IsEqual(InTaskTarget))
+		/*if (!TaskTarget->IsEqual(InTaskTarget))
 		{
 			IsTarget = false;
 			break;
-		}
+		}*/
 	}
 
 	if (IsTarget == false)

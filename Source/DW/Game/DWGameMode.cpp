@@ -67,5 +67,6 @@ void ADWGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 
 void ADWGameMode::StartPlay()
 {
-	SetGameStateTag(DWTAG_GAME_STATE_READY);
+	Super::StartPlay();
+	//SetGameStateTag(DWTAG_GAME_STATE_READY);
 }

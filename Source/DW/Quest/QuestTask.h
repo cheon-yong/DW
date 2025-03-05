@@ -6,6 +6,7 @@
 
 #include "QuestTask.generated.h"
 
+class UQuestCategory;
 class UQuestDefinition;
 class UQuestTaskTarget;
 class UQuestTaskAction;
@@ -27,7 +28,8 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnStateChanged, UQuestTask*/* Task */, E
  * 
  */
 UCLASS(BlueprintType, Blueprintable)
-class DW_API UQuestTask : public UObject
+class DW_API UQuestTask
+	: public UObject
 {
 	GENERATED_BODY()
 	
@@ -38,13 +40,13 @@ public:
 
 	void End();
 
-	void ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount);
+	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
 	void SetSuccessCount(int32 SuccessCount);
 
 	void SetTaskState(ETaskState NewState);
 	
-	bool IsTarget(FGameplayTag InCategoryTag, UQuestTaskTarget* InTaskTarget);
+	bool IsTarget(TSubclassOf<UQuestCategory> InCategory, UObject* InTaskTarget);
 
 public:
 	FOnSuccessChanged OnSuccessChanged;
@@ -55,16 +57,21 @@ protected:
 	TObjectPtr<UQuestDefinition> Quest;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest, meta = (Categories = Quest))
-	FGameplayTag QuestCategory;
+	TSubclassOf<UQuestCategory> QuestCategory;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
-	TObjectPtr<UQuestTaskAction> TaskAction;
+	TSubclassOf<UQuestTaskAction> TaskAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
-	TArray<TObjectPtr<UQuestTaskTarget>> TaskTargets;
+	TArray<TObjectPtr<UObject>> TaskTargets;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)
 	ETaskState TaskState = ETaskState::Inactive;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
+	int32 CompleteCount = 0;
+
 	int32 CurrentCount = 0;
+
+	
 };

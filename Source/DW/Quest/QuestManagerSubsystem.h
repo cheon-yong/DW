@@ -7,6 +7,7 @@
 
 #include "QuestManagerSubsystem.generated.h"
 
+class UQuestCategory;
 class UQuestInstance;
 class UQuestDefinition;
 class UQuestTaskTarget;
@@ -22,9 +23,11 @@ class DW_API UQuestManagerSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 public:
-	void RegisterQuest(UQuestDefinition* InQuestDefinition);
 
-	void ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount);
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void RegisterQuest(TSubclassOf<UQuestDefinition> InQuestDefinition);
+
+	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQuestRegistered OnQuestRegistered;
@@ -37,6 +40,7 @@ protected:
 	void OnQuestCanceled(UQuestDefinition* InQuestDefinition);
 
 protected:
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<TObjectPtr<UQuestDefinition>> Quests;
 };

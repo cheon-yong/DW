@@ -13,6 +13,5 @@ class DW_API UQuestTaskTarget : public UObject
 	GENERATED_BODY()
 	
 public:
-	bool IsEqual(UObject* Object) PURE_VIRTUAL(UQuestTaskAction::IsEqual, return false;);
-	
+	virtual bool IsEqual(UObject* Object) PURE_VIRTUAL(UQuestTaskAction::IsEqual, return false;);
 };

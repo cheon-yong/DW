@@ -6,6 +6,7 @@
 
 #include "QuestDefinition.generated.h"
 
+class UQuestCategory;
 class UQuestTask;
 class UQuestReward;
 class UQuestTaskTarget;
@@ -33,7 +34,7 @@ class DW_API UQuestDefinition : public UObject
 public:
 	void Setup();
 
-	void ReceiveReport(FGameplayTag CategoryTag, UQuestTaskTarget* TaskTarget, int32 SuccessCount);
+	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
 protected:
 	void OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess);
@@ -46,7 +47,7 @@ public:
 	FOnQuestEvent OnCanceled;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Quest, meta=(Categories=Quest))
-	FGameplayTag QuestCategory;
+	TSubclassOf<UQuestCategory> QuestCategory;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
 	FName QuestName;
