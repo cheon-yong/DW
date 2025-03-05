@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Components/GameStateComponent.h"
+#include "Game/StageComponent.h"
+
 #include "MonsterSpawnComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterChanged, int32, MonsterNum);
@@ -11,6 +13,7 @@ class ADWMonsterSpawnPoint;
 class USpawnMonsterData;
 class ADWCharacterNonPlayer;
 struct FGameplayEffectSpec;
+struct FStageData;
 
 /**
  * 
@@ -23,17 +26,20 @@ class DW_API UMonsterSpawnComponent : public UGameStateComponent
 public:
 	UMonsterSpawnComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void OnGameStateChange(FGameplayTag NewStateTag);
 
+	void OnStageChanged(FStageData& StageData);
+
+	void OnStageStateChanged(EStageState& NewStageState);
+
 	void SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData);
 
 protected:
 	void FindAllSpawnPoints();
-
-	void LoadSpawnMonsterData();
 
 	void StartSpawnMonster();
 

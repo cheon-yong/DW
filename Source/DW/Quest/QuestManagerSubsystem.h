@@ -12,7 +12,7 @@ class UQuestInstance;
 class UQuestDefinition;
 class UQuestTaskTarget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestRegistered, UQuestDefinition*, Quest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestSystemEvent, UQuestDefinition*, Quest);
 
 /**
  * 
@@ -29,8 +29,7 @@ public:
 
 	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
-	UPROPERTY(BlueprintAssignable)
-	FOnQuestRegistered OnQuestRegistered;
+	TArray<TObjectPtr<UQuestDefinition>> GetQuests() { return Quests; }
 
 protected:
 	UFUNCTION()
@@ -38,6 +37,16 @@ protected:
 
 	UFUNCTION()
 	void OnQuestCanceled(UQuestDefinition* InQuestDefinition);
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnQuestSystemEvent OnQuestRegister;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnQuestSystemEvent OnQuestComplete;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnQuestSystemEvent OnQuestCancel;
 
 protected:
 

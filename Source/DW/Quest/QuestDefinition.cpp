@@ -34,9 +34,63 @@ void UQuestDefinition::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, 
 
 	QuestTasks[CurrentIndex]->ReceiveReport(CategoryClass, TaskTarget, SuccessCount);
 
+	if (QuestTasks[CurrentIndex]->IsComplete())
+	{
+		if (CurrentIndex + 1 == QuestTasks.Num())
+		{
+			QuestTasks[CurrentIndex]->End();
+			SetQuestState(EQuestState::WaitingForCompletion);
+			if (bAutoComplete)
+				Complete();
+		}
+		else
+		{
+			auto PrevTask = QuestTasks[CurrentIndex++];
+			PrevTask->End();
+			auto CurrentTask = QuestTasks[CurrentIndex];
+			CurrentTask->Start();
+			OnTaskChanged.Broadcast(this, PrevTask, CurrentTask);
+		}
+	}
 	
+
+}
+
+void UQuestDefinition::SetQuestState(EQuestState NewState)
+{
+	if (QuestState == NewState)
+		return;
+
+	auto PrevState = QuestState;
+	QuestState = NewState;
+	OnQuestStateChanged.Broadcast(this, QuestState, PrevState);
+}
+
+void UQuestDefinition::Complete()
+{
+	CheckIsRunning();
+
+	SetQuestState(EQuestState::Complete);
+
+	// TODO : Reward
+	
+	OnCompleted.Broadcast(this);
+
+	OnQuestStateChanged.Clear();
+	OnTaskChanged.Clear();
+	OnCompleted.Clear();
+	OnCanceled.Clear();
+	OnTaskSuccessChanged.Clear();
+}
+
+void UQuestDefinition::CheckIsRunning()
+{
+	check(QuestState != EQuestState::Inactive);
+	check(QuestState != EQuestState::Complete);
+	check(QuestState != EQuestState::Cancel);
 }
 
 void UQuestDefinition::OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess)
 {
+	OnTaskSuccessChanged.Broadcast(this, Task, CurrentSuccess, PrevSuccess);
 }

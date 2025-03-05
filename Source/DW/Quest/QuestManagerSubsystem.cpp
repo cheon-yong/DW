@@ -19,7 +19,7 @@ void UQuestManagerSubsystem::RegisterQuest(TSubclassOf<UQuestDefinition> InQuest
 	Quests.Emplace(Quest);
 
 	Quest->Setup();
-	OnQuestRegistered.Broadcast(Quest);
+	OnQuestRegister.Broadcast(Quest);
 }
 
 void UQuestManagerSubsystem::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount)
@@ -33,10 +33,14 @@ void UQuestManagerSubsystem::ReceiveReport(TSubclassOf<UQuestCategory> CategoryC
 void UQuestManagerSubsystem::OnQuestCompleted(UQuestDefinition* InQuestDefinition)
 {
 	Quests.Remove(InQuestDefinition);
+
+	OnQuestComplete.Broadcast(InQuestDefinition);
 }
 
 void UQuestManagerSubsystem::OnQuestCanceled(UQuestDefinition* InQuestDefinition)
 {
 	Quests.Remove(InQuestDefinition);
+
+	OnQuestCancel.Broadcast(InQuestDefinition);	
 }
 

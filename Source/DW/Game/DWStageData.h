@@ -7,6 +7,7 @@
 #include "DWStageData.generated.h"
 
 class USpawnMonsterData;
+class UQuestDefinition;
 
 USTRUCT(Blueprintable)
 struct FStageData
@@ -20,8 +21,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<USpawnMonsterData> MonsterData;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 CountToClear = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
+	TArray<TSubclassOf<UQuestDefinition>> Quests;
 };
 
 /**
@@ -33,6 +34,6 @@ class DW_API UDWStageData : public UPrimaryDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Stage)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stage)
 	TArray<FStageData> StageDatas;
 };

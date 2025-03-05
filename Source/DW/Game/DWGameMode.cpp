@@ -26,18 +26,6 @@ void ADWGameMode::OnPlayerDead()
 	GameOver();
 }
 
-const FStageData& ADWGameMode::GetCurrentStageData()
-{
-	return DWStageData->StageDatas[CurrentStageIndex];
-}
-
-void ADWGameMode::SetScore(int32 NewScore)
-{
-	Score = NewScore;
-	CheckClear();
-	OnScoreChanged.Broadcast(Score);
-}
-
 void ADWGameMode::SetGameStateTag(FGameplayTag NewStateTag)
 {
 	if (GameStateTag.MatchesTagExact(NewStateTag))
@@ -52,14 +40,6 @@ void ADWGameMode::GameOver()
 	SetGameStateTag(DWTAG_GAME_STATE_DEFEATED);
 }
 
-void ADWGameMode::CheckClear()
-{
-	if (Score >= ClearScore)
-	{
-		SetGameStateTag(DWTAG_GAME_STATE_CLEAR);
-	}
-}
-
 void ADWGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
@@ -68,5 +48,9 @@ void ADWGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 void ADWGameMode::StartPlay()
 {
 	Super::StartPlay();
-	//SetGameStateTag(DWTAG_GAME_STATE_READY);
+}
+
+void ADWGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }

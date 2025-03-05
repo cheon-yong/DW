@@ -45,6 +45,8 @@ public:
 	void SetSuccessCount(int32 SuccessCount);
 
 	void SetTaskState(ETaskState NewState);
+
+	bool IsComplete() { return TaskState == ETaskState::Complete; }
 	
 	bool IsTarget(TSubclassOf<UQuestCategory> InCategory, UObject* InTaskTarget);
 
@@ -72,6 +74,4 @@ protected:
 	int32 CompleteCount = 0;
 
 	int32 CurrentCount = 0;
-
-	
 };

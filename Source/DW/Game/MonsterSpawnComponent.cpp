@@ -4,20 +4,39 @@
 #include "Game/MonsterSpawnComponent.h"
 #include "Actor/DWMonsterSpawnPoint.h"
 #include "EngineUtils.h"
+
 #include "Game/DWGameMode.h"
-#include "Tag/DWGameplayTag.h"
+#include "Game/DWGameState.h"
 #include "Game/SpawnMonsterData.h"
+#include "Game/DWStageData.h"
+
+#include "Tag/DWGameplayTag.h"
+
 #include "Character/DWCharacterNonPlayer.h"
 #include "NavigationSystem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AbilitySystem/Attributes/DWAttributeSet.h"
 #include "GameplayEffectExtension.h"
-#include "Game/DWStageData.h"
+
 
 UMonsterSpawnComponent::UMonsterSpawnComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+void UMonsterSpawnComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if (ADWGameState* DWGameState = Cast<ADWGameState>(GetWorld()->GetGameState()))
+	{
+		if (UStageComponent* StageComponent = DWGameState->GetComponentByClass<UStageComponent>())
+		{
+			StageComponent->OnStageChanged.AddUObject(this, &ThisClass::OnStageChanged);
+			StageComponent->OnStageStateChanged.AddUObject(this, &ThisClass::OnStageStateChanged);
+		}
+	}
 }
 
 void UMonsterSpawnComponent::BeginPlay()
@@ -36,7 +55,7 @@ void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
 {
 	if (NewStateTag == DWTAG_GAME_STATE_READY)
 	{
-		LoadSpawnMonsterData();
+		
 	}
 	else if (NewStateTag == DWTAG_GAME_STATE_PLAYING)
 	{
@@ -58,6 +77,34 @@ void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
 	}
 }
 
+void UMonsterSpawnComponent::OnStageChanged(FStageData& StageData)
+{
+	auto& MonsterData = StageData.MonsterData;
+	SetSpawnMonsterData(MonsterData);
+}
+
+void UMonsterSpawnComponent::OnStageStateChanged(EStageState& NewStageState)
+{
+	switch (NewStageState)
+	{
+	case EStageState::Ready :
+		break;
+	case EStageState::Playing :
+		StartSpawnMonster();
+		break;
+	case EStageState::Complete :
+		StopSpawnMonster();
+		StopAllAI();
+		break;
+	case EStageState::Fail:
+		StopSpawnMonster();
+		StopAllAI();
+		break;
+	default:
+		break;
+	}
+}
+
 void UMonsterSpawnComponent::SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData)
 {
 	SpawnMonsterData = InSpawnMonsterData;
@@ -75,14 +122,6 @@ void UMonsterSpawnComponent::FindAllSpawnPoints()
 				SpawnPoints.Emplace(SpawnPoint);
 			}
 		}
-	}
-}
-
-void UMonsterSpawnComponent::LoadSpawnMonsterData()
-{
-	if (ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		SpawnMonsterData = GameMode->GetCurrentStageData().MonsterData;
 	}
 }
 
@@ -151,11 +190,6 @@ void UMonsterSpawnComponent::DestroyMonster(ADWCharacterNonPlayer* Monster)
 		Monsters.Remove(Monster);
 		Monster->Destroy();
 		OnMonsterChanged.Broadcast(Monsters.Num());
-		if (ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode()))
-		{
-			int32 CurrentScore = GameMode->GetScore();
-			GameMode->SetScore(CurrentScore + 1);
-		}
 	}
 }
 

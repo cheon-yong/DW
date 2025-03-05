@@ -11,8 +11,6 @@ class UQuestTask;
 class UQuestReward;
 class UQuestTaskTarget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestEvent, UQuestDefinition*, Quest);
-
 UENUM(BlueprintType)
 enum class EQuestState : uint8
 {
@@ -22,6 +20,11 @@ enum class EQuestState : uint8
 	Cancel,
 	WaitingForCompletion
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestEvent, UQuestDefinition*, Quest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnQuestStateChanged, UQuestDefinition*, Quest, EQuestState, CurrentState, EQuestState, PrevState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTaskChanged, UQuestDefinition*, Quest, UQuestTask*, CurrentTask, UQuestTask*, PrevTask);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnTaskSuccessChanged, UQuestDefinition*, Quest, UQuestTask*, Task, int32, CurrentCount, int32, PrevCount);
 
 /**
  * 
@@ -36,10 +39,25 @@ public:
 
 	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
+	void SetQuestState(EQuestState NewState);
+
+	void Complete();
+
+	void CheckIsRunning();
+
 protected:
 	void OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess);
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnQuestStateChanged OnQuestStateChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTaskSuccessChanged OnTaskSuccessChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTaskChanged OnTaskChanged;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnQuestEvent OnCompleted;
 
@@ -66,6 +84,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)
 	EQuestState QuestState = EQuestState::Inactive;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Option)
+	bool bAutoComplete = false;
 
 	int32 CurrentIndex = 0;
 };

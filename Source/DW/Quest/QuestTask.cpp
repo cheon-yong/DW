@@ -32,14 +32,26 @@ void UQuestTask::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObjec
 
 void UQuestTask::SetSuccessCount(int32 SuccessCount)
 {
+	int PrevCount = CurrentCount;
 	int32 NewCount = TaskAction.GetDefaultObject()->Run(this, CurrentCount, SuccessCount);
+	if (NewCount == CurrentCount)
+		return;
+
+	CurrentCount = NewCount;
+	OnSuccessChanged.Broadcast(this, CurrentCount, PrevCount);
+	if (CurrentCount == CompleteCount)
+	{
+		SetTaskState(ETaskState::Complete);
+	}
 }
 
 void UQuestTask::SetTaskState(ETaskState NewState)
 {
+	if (TaskState == NewState)
+		return;
+
 	auto PrevState = TaskState;
 	TaskState = NewState;
-
 	OnStateChanged.Broadcast(this, TaskState, PrevState);
 }
 
