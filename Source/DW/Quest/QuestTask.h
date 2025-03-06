@@ -21,15 +21,14 @@ enum class ETaskState : uint8
 
 
 
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSuccessChanged, UQuestTask*/* Task */, int32/* CurrentSuccess*/, int32/*PrevSuccess*/);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnStateChanged, UQuestTask*/* Task */, ETaskState/* CurrentState */, ETaskState/*PrevState*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSuccessChanged, UQuestTask*, Task, int32, CurrentSuccess, int32, PrevSuccess);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStateChanged, UQuestTask*, Task, ETaskState, CurrentState, ETaskState, PrevState);
 
 /**
  * 
  */
 UCLASS(BlueprintType, Blueprintable)
-class DW_API UQuestTask
-	: public UObject
+class DW_API UQuestTask : public UObject
 {
 	GENERATED_BODY()
 	
@@ -51,7 +50,10 @@ public:
 	bool IsTarget(TSubclassOf<UQuestCategory> InCategory, UObject* InTaskTarget);
 
 public:
+	UPROPERTY(BlueprintAssignable)
 	FOnSuccessChanged OnSuccessChanged;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnStateChanged OnStateChanged;
 
 protected:
@@ -60,6 +62,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest, meta = (Categories = Quest))
 	TSubclassOf<UQuestCategory> QuestCategory;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
+	FString TaskDescription;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
 	TSubclassOf<UQuestTaskAction> TaskAction;
@@ -73,5 +78,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
 	int32 CompleteCount = 0;
 
+	UPROPERTY(BlueprintReadOnly, Category = Quest)
 	int32 CurrentCount = 0;
 };

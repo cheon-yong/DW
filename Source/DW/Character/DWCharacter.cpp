@@ -25,15 +25,6 @@ void ADWCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	// Test ÄÚµå
-	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-	{
-		if (UQuestManagerSubsystem* QuestSubsystem = GameInstance->GetSubsystem<UQuestManagerSubsystem>())
-		{
-			if (TestQuest != nullptr)
-				QuestSubsystem->RegisterQuest(TestQuest);
-		}
-	}
 }
 
 UAbilitySystemComponent* ADWCharacter::GetAbilitySystemComponent() const

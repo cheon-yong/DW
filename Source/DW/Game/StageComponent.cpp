@@ -16,35 +16,55 @@ void UStageComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	LoadStageData();
 }
 
 void UStageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetStageState(EStageState::Ready);
+	ReadyStage();
+}
+
+void UStageComponent::ReadyStage()
+{
+	LoadStageData();
+
+	CurrentStageData->Ready();
+}
+
+void UStageComponent::PlayingStage()
+{
+	
+	CurrentStageData->Playing();
+}
+
+void UStageComponent::CompleteStage()
+{
+	
+	CurrentStageData->Complete();
+}
+
+void UStageComponent::FailStage()
+{
+
+	CurrentStageData->Fail();
 }
 
 void UStageComponent::LoadStageData()
 {
 	auto& StageDatas = DWStageData->StageDatas;
-	if (CurrentStageIndex >= StageDatas.Num())
+	if (CurrentStageIndex + 1 >= StageDatas.Num())
 	{
 		// TODO : Error Check?
 		return;
 	}
 
-	CurrentStageData = StageDatas[CurrentStageIndex++];
-
-	OnStageChanged.Broadcast(CurrentStageData);
-}
-
-void UStageComponent::SetStageState(EStageState NewState)
-{
-	if (StageState == NewState)
-		return;
-
-	StageState = NewState;
-	OnStageStateChanged.Broadcast(StageState);
+	UStageData* PrevData = CurrentStageData;
+	if (PrevData != nullptr)
+	{
+		PrevData->Clear();
+	}
+	CurrentStageIndex++;
+	CurrentStageData = NewObject<UStageData>(this, StageDatas[CurrentStageIndex]);
+	OnStageChanged.Broadcast(CurrentStageData, PrevData);
 }

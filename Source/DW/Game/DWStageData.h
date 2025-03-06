@@ -6,13 +6,33 @@
 #include "Engine/DataAsset.h"
 #include "DWStageData.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EStageState : uint8
+{
+	Ready,
+	Playing,
+	Complete,
+	Fail,
+};
+
 class USpawnMonsterData;
 class UQuestDefinition;
 
-USTRUCT(Blueprintable)
-struct FStageData
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnStageStateChanged, UStageData*);
+
+UCLASS(Blueprintable)
+class UStageData : public UObject
 {
 	GENERATED_BODY()
+
+public:
+	void Ready();
+	void Playing();
+	void Fail();
+	void Complete();
+	void Clear();
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -23,6 +43,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
 	TArray<TSubclassOf<UQuestDefinition>> Quests;
+
+	EStageState StageState = EStageState::Ready;
+
+	FOnStageStateChanged OnReady;
+
+	FOnStageStateChanged OnPlaying;
+
+	FOnStageStateChanged OnFail;
+
+	FOnStageStateChanged OnComplete;
+	
 };
 
 /**
@@ -35,5 +66,5 @@ class DW_API UDWStageData : public UPrimaryDataAsset
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stage)
-	TArray<FStageData> StageDatas;
+	TArray<TSubclassOf<UStageData>> StageDatas;
 };

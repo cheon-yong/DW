@@ -7,23 +7,13 @@
 #include "Game/DWStageData.h"
 #include "StageComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnStageChanged, FStageData&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnStageStateChanged, EStageState&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageChanged, UStageData*/* CurrentData */, UStageData*/* PrevData */);
 
-UENUM(BlueprintType)
-enum class EStageState : uint8
-{
-	None,
-	Ready,
-	Playing,
-	Complete,
-	Fail,
-};
 
 /**
  * 
  */
-UCLASS(BlueprintType)
+UCLASS(Blueprintable, BlueprintType)
 class DW_API UStageComponent : public UGameStateComponent
 {
 	GENERATED_BODY()
@@ -35,23 +25,31 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void LoadStageData();
+	UFUNCTION(BlueprintCallable)
+	void ReadyStage();
 
 	UFUNCTION(BlueprintCallable)
-	void SetStageState(EStageState NewState);
-public:
+	void PlayingStage();
 
+	UFUNCTION(BlueprintCallable)
+	void CompleteStage();
+
+	UFUNCTION(BlueprintCallable)
+	void FailStage();
+
+protected:
+
+	void LoadStageData();
+
+public:
 	FOnStageChanged OnStageChanged;
 
-	FOnStageStateChanged OnStageStateChanged;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stage)
-	FStageData CurrentStageData;
+	TObjectPtr<UStageData> CurrentStageData;
 		
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stage)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stage)
 	TObjectPtr<UDWStageData> DWStageData;
 
-	EStageState StageState = EStageState::None;
 
-	int32 CurrentStageIndex = 0;
+	int32 CurrentStageIndex = -1;
 };

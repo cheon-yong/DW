@@ -9,9 +9,11 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(DefaultToInstanced, EditInlineNew, Abstract)
 class DW_API UQuestReward : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void Give() PURE_VIRTUAL(UQuestReward::Give, return ;);
 };

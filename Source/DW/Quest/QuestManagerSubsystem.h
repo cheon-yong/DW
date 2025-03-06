@@ -29,7 +29,8 @@ public:
 
 	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
-	TArray<TObjectPtr<UQuestDefinition>> GetQuests() { return Quests; }
+	UFUNCTION(BlueprintCallable)
+	TArray<UQuestDefinition*> GetQuests() { return Quests; }
 
 protected:
 	UFUNCTION()

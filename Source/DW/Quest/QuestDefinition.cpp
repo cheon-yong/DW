@@ -18,7 +18,7 @@ void UQuestDefinition::Setup()
 	for (UQuestTask* QuestTask : QuestTasks)
 	{
 		QuestTask->Setup(this);
-		QuestTask->OnSuccessChanged.AddUObject(this, &ThisClass::OnSuccessChanged);
+		QuestTask->OnSuccessChanged.AddDynamic(this, &ThisClass::OnSuccessChanged);
 	}
 
 	QuestState = EQuestState::Running;
@@ -73,6 +73,11 @@ void UQuestDefinition::Complete()
 	SetQuestState(EQuestState::Complete);
 
 	// TODO : Reward
+	for (TSubclassOf<UQuestReward> RewardClass : QuestRewards)
+	{
+		UQuestReward* Reward = NewObject<UQuestReward>(this, RewardClass);
+		Reward->Give();
+	}
 	
 	OnCompleted.Broadcast(this);
 

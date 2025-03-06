@@ -46,6 +46,7 @@ public:
 	void CheckIsRunning();
 
 protected:
+	UFUNCTION()
 	void OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess);
 
 public:

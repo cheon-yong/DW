@@ -75,8 +75,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS)
 	float CueTime = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = Quest)
-	TSubclassOf<UQuestDefinition> TestQuest;
 };
 

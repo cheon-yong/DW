@@ -13,7 +13,7 @@ class ADWMonsterSpawnPoint;
 class USpawnMonsterData;
 class ADWCharacterNonPlayer;
 struct FGameplayEffectSpec;
-struct FStageData;
+class UStageData;
 
 /**
  * 
@@ -29,12 +29,15 @@ public:
 	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnGameStateChange(FGameplayTag NewStateTag);
+	void OnStageChanged(UStageData* CurrentStageData, UStageData* PrevStageData);
 
-	void OnStageChanged(FStageData& StageData);
+	void OnStageReady(UStageData* CurrentStageData);
 
-	void OnStageStateChanged(EStageState& NewStageState);
+	void OnStagePlaying(UStageData* CurrentStageData);
+
+	void OnStageComplete(UStageData* CurrentStageData);
+
+	void OnStageFail(UStageData* CurrentStageData);
 
 	void SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData);
 

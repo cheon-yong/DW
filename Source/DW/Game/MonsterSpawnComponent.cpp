@@ -29,80 +29,55 @@ void UMonsterSpawnComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	if (ADWGameState* DWGameState = Cast<ADWGameState>(GetWorld()->GetGameState()))
-	{
-		if (UStageComponent* StageComponent = DWGameState->GetComponentByClass<UStageComponent>())
-		{
-			StageComponent->OnStageChanged.AddUObject(this, &ThisClass::OnStageChanged);
-			StageComponent->OnStageStateChanged.AddUObject(this, &ThisClass::OnStageStateChanged);
-		}
-	}
 }
 
 void UMonsterSpawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ADWGameMode* GameMode = Cast<ADWGameMode>(GetWorld()->GetAuthGameMode()))
+	if (ADWGameState* DWGameState = Cast<ADWGameState>(GetWorld()->GetGameState()))
 	{
-		GameMode->OnGameStateChanged.AddDynamic(this, &ThisClass::OnGameStateChange);
+		if (UStageComponent* StageComponent = DWGameState->GetComponentByClass<UStageComponent>())
+		{
+			StageComponent->OnStageChanged.AddUObject(this, &ThisClass::OnStageChanged);
+		}
 	}
 
 	FindAllSpawnPoints();
 }
 
-void UMonsterSpawnComponent::OnGameStateChange(FGameplayTag NewStateTag)
+void UMonsterSpawnComponent::OnStageChanged(UStageData* CurrentStageData, UStageData* PrevStageData)
 {
-	if (NewStateTag == DWTAG_GAME_STATE_READY)
-	{
-		
-	}
-	else if (NewStateTag == DWTAG_GAME_STATE_PLAYING)
-	{
-		StartSpawnMonster();
-	}
-	else if (NewStateTag == DWTAG_GAME_STATE_DEFEATED)
-	{
-		StopSpawnMonster();
-		StopAllAI();
-	}
-	else if (NewStateTag == DWTAG_GAME_STATE_CLEAR)
-	{
-		StopSpawnMonster();
-		StopAllAI();
-	}
-	else
-	{
-
-	}
-}
-
-void UMonsterSpawnComponent::OnStageChanged(FStageData& StageData)
-{
-	auto& MonsterData = StageData.MonsterData;
+	auto& MonsterData = CurrentStageData->MonsterData;
 	SetSpawnMonsterData(MonsterData);
+
+	CurrentStageData->OnReady.AddUObject(this, &ThisClass::OnStageReady);
+	CurrentStageData->OnPlaying.AddUObject(this, &ThisClass::OnStagePlaying);
+	CurrentStageData->OnComplete.AddUObject(this, &ThisClass::OnStageComplete);
+	CurrentStageData->OnFail.AddUObject(this, &ThisClass::OnStageFail);
 }
 
-void UMonsterSpawnComponent::OnStageStateChanged(EStageState& NewStageState)
+void UMonsterSpawnComponent::OnStageReady(UStageData* CurrentStageData)
 {
-	switch (NewStageState)
-	{
-	case EStageState::Ready :
-		break;
-	case EStageState::Playing :
-		StartSpawnMonster();
-		break;
-	case EStageState::Complete :
-		StopSpawnMonster();
-		StopAllAI();
-		break;
-	case EStageState::Fail:
-		StopSpawnMonster();
-		StopAllAI();
-		break;
-	default:
-		break;
-	}
+	// TODO : Something
+}
+
+void UMonsterSpawnComponent::OnStagePlaying(UStageData* CurrentStageData)
+{
+	StartSpawnMonster();
+}
+
+void UMonsterSpawnComponent::OnStageComplete(UStageData* CurrentStageData)
+{
+	StopSpawnMonster();
+	StopAllAI();
+}
+
+void UMonsterSpawnComponent::OnStageFail(UStageData* CurrentStageData)
+{
+
+	StopSpawnMonster();
+	StopAllAI();
 }
 
 void UMonsterSpawnComponent::SetSpawnMonsterData(USpawnMonsterData* InSpawnMonsterData)
