@@ -17,10 +17,13 @@ public:
 	// Sets default values for this actor's properties
 	ADWEventActor();
 
+	UFUNCTION(BlueprintNativeEvent)
+	void ActivateActor();
+	virtual void ActivateActor_Implementation();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Event)

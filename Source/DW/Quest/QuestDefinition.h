@@ -45,13 +45,15 @@ public:
 
 	void CheckIsRunning();
 
+	bool IsCompletable() { return QuestState == EQuestState::WaitingForCompletion; }
+
+	bool IsComplete() { return QuestState == EQuestState::Complete; }
+
 protected:
 	UFUNCTION()
 	void OnSuccessChanged(UQuestTask* Task, int32 CurrentSuccess, int32 PrevSuccess);
 
 public:
-	UPROPERTY(BlueprintAssignable)
-	FOnQuestStateChanged OnQuestStateChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnTaskSuccessChanged OnTaskSuccessChanged;

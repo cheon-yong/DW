@@ -25,3 +25,7 @@ void ADWEventActor::BeginPlay()
 	
 }
 
+void ADWEventActor::ActivateActor_Implementation()
+{
+}
+

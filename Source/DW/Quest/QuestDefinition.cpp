@@ -52,8 +52,6 @@ void UQuestDefinition::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, 
 			OnTaskChanged.Broadcast(this, PrevTask, CurrentTask);
 		}
 	}
-	
-
 }
 
 void UQuestDefinition::SetQuestState(EQuestState NewState)
@@ -63,7 +61,6 @@ void UQuestDefinition::SetQuestState(EQuestState NewState)
 
 	auto PrevState = QuestState;
 	QuestState = NewState;
-	OnQuestStateChanged.Broadcast(this, QuestState, PrevState);
 }
 
 void UQuestDefinition::Complete()
@@ -81,7 +78,6 @@ void UQuestDefinition::Complete()
 	
 	OnCompleted.Broadcast(this);
 
-	OnQuestStateChanged.Clear();
 	OnTaskChanged.Clear();
 	OnCompleted.Clear();
 	OnCanceled.Clear();

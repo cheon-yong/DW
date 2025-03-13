@@ -29,9 +29,6 @@ public:
 
 	void ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount);
 
-	UFUNCTION(BlueprintCallable)
-	TArray<UQuestDefinition*> GetQuests() { return Quests; }
-
 protected:
 	UFUNCTION()
 	void OnQuestCompleted(UQuestDefinition* InQuestDefinition);
@@ -49,8 +46,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnQuestSystemEvent OnQuestCancel;
 
-protected:
+public:
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<TObjectPtr<UQuestDefinition>> Quests;
+	TArray<TWeakObjectPtr<UQuestDefinition>> Quests;
 };

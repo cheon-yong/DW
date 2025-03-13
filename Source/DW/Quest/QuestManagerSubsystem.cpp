@@ -24,15 +24,20 @@ void UQuestManagerSubsystem::RegisterQuest(TSubclassOf<UQuestDefinition> InQuest
 
 void UQuestManagerSubsystem::ReceiveReport(TSubclassOf<UQuestCategory> CategoryClass, UObject* TaskTarget, int32 SuccessCount)
 {
-	for (UQuestDefinition* Quest : Quests)
+	for (TWeakObjectPtr<UQuestDefinition> Quest : Quests)
 	{
 		Quest->ReceiveReport(CategoryClass, TaskTarget, SuccessCount);
 	}
+
+	// 
+	Quests.RemoveAll([](TWeakObjectPtr<UQuestDefinition> Quest) {
+			return Quest->IsComplete();
+		});
 }
 
 void UQuestManagerSubsystem::OnQuestCompleted(UQuestDefinition* InQuestDefinition)
 {
-	Quests.Remove(InQuestDefinition);
+	//Quests.Remove(InQuestDefinition);
 
 	OnQuestComplete.Broadcast(InQuestDefinition);
 }

@@ -38,11 +38,13 @@ void UQuestTask::SetSuccessCount(int32 SuccessCount)
 		return;
 
 	CurrentCount = NewCount;
-	OnSuccessChanged.Broadcast(this, CurrentCount, PrevCount);
+
 	if (CurrentCount == CompleteCount)
 	{
 		SetTaskState(ETaskState::Complete);
 	}
+
+	OnSuccessChanged.Broadcast(this, CurrentCount, PrevCount);
 }
 
 void UQuestTask::SetTaskState(ETaskState NewState)
