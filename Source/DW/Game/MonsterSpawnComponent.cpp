@@ -109,6 +109,9 @@ void UMonsterSpawnComponent::FindAllSpawnPoints()
 
 void UMonsterSpawnComponent::StartSpawnMonster()
 {
+	if (SpawnPoints.Num() == 0)
+		return;
+
 	for (const FSpawnData& MonsterData : SpawnMonsterData->SpawnDatas)
 	{
 		FTimerHandle TimerHandle;
