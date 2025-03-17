@@ -59,8 +59,8 @@ public:
 /**
  * 
  */
-UCLASS()
-class DW_API UDWStageData : public UPrimaryDataAsset
+UCLASS(Blueprintable)
+class DW_API UDWStageData : public UObject
 {
 	GENERATED_BODY()
 	
