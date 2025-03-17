@@ -26,7 +26,7 @@ public:
 
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Quest)
 	TSubclassOf<UQuestDefinition> QuestToGive;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Quest)

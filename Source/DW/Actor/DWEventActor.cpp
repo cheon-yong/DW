@@ -16,6 +16,7 @@ ADWEventActor::ADWEventActor()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	BoxComponent->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
