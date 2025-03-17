@@ -2,16 +2,16 @@
 
 
 #include "Quest/Reward/StageClearReward.h"
-#include "Game/StageComponent.h"
+#include "Game/DWStageSubsystem.h"
 #include "Game/DWGameState.h"
 
 void UStageClearReward::Give()
 {
-	if (ADWGameState* DWGameState = Cast<ADWGameState>(GetWorld()->GetGameState()))
+	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
 	{
-		if (UStageComponent* StageComp = DWGameState->GetComponentByClass<UStageComponent>())
+		if (UDWStageSubsystem* StageSubsystem = GameInstance->GetSubsystem<UDWStageSubsystem>())
 		{
-			StageComp->CompleteStage();
+			StageSubsystem->CompleteStage();
 		}
 	}
 }

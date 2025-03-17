@@ -9,6 +9,7 @@
 #include "Game/DWGameState.h"
 #include "Game/SpawnMonsterData.h"
 #include "Game/DWStageData.h"
+#include "Game/DWStageSubsystem.h"
 
 #include "Tag/DWGameplayTag.h"
 
@@ -35,13 +36,18 @@ void UMonsterSpawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ADWGameState* DWGameState = Cast<ADWGameState>(GetWorld()->GetGameState()))
+
+	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
 	{
-		if (UStageComponent* StageComponent = DWGameState->GetComponentByClass<UStageComponent>())
+		if (UDWStageSubsystem* StageSubsystem = GameInstance->GetSubsystem<UDWStageSubsystem>())
 		{
-			StageComponent->OnStageChanged.AddUObject(this, &ThisClass::OnStageChanged);
+			StageSubsystem->OnStageChanged.AddUObject(this, &ThisClass::OnStageChanged);
+
+			OnStageChanged(StageSubsystem->CurrentStageData, nullptr);
 		}
 	}
+
+	
 
 	FindAllSpawnPoints();
 }
