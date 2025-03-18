@@ -27,6 +27,9 @@ public:
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintCallable)
+	void LoadStage(TSubclassOf<UStageData> NewStageData);
+
+	UFUNCTION(BlueprintCallable)
 	void ReadyStage();
 
 	UFUNCTION(BlueprintCallable)
@@ -42,7 +45,10 @@ protected:
 
 	void LoadDefaultStageData();
 
-	void LoadStageData();
+	void LoadNextStageData();
+
+	UFUNCTION()
+	void OnStreamLevelLoaded();
 
 public:
 	FOnStageChanged OnStageChanged;

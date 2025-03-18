@@ -54,6 +54,9 @@ void UMonsterSpawnComponent::BeginPlay()
 
 void UMonsterSpawnComponent::OnStageChanged(UStageData* CurrentStageData, UStageData* PrevStageData)
 {
+	if (CurrentStageData == nullptr)
+		return;
+
 	auto& MonsterData = CurrentStageData->MonsterData;
 	SetSpawnMonsterData(MonsterData);
 
