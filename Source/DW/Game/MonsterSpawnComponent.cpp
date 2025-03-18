@@ -36,7 +36,6 @@ void UMonsterSpawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
 	{
 		if (UDWStageSubsystem* StageSubsystem = GameInstance->GetSubsystem<UDWStageSubsystem>())
@@ -48,8 +47,6 @@ void UMonsterSpawnComponent::BeginPlay()
 	}
 
 	
-
-	FindAllSpawnPoints();
 }
 
 void UMonsterSpawnComponent::OnStageChanged(UStageData* CurrentStageData, UStageData* PrevStageData)
@@ -69,6 +66,7 @@ void UMonsterSpawnComponent::OnStageChanged(UStageData* CurrentStageData, UStage
 void UMonsterSpawnComponent::OnStageReady(UStageData* CurrentStageData)
 {
 	// TODO : Something
+	FindAllSpawnPoints();
 }
 
 void UMonsterSpawnComponent::OnStagePlaying(UStageData* CurrentStageData)
@@ -84,7 +82,6 @@ void UMonsterSpawnComponent::OnStageComplete(UStageData* CurrentStageData)
 
 void UMonsterSpawnComponent::OnStageFail(UStageData* CurrentStageData)
 {
-
 	StopSpawnMonster();
 	StopAllAI();
 }
@@ -112,6 +109,7 @@ void UMonsterSpawnComponent::FindAllSpawnPoints()
 
 void UMonsterSpawnComponent::StartSpawnMonster()
 {
+	FindAllSpawnPoints();
 	if (SpawnPoints.Num() == 0)
 		return;
 

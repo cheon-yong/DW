@@ -46,11 +46,15 @@ void UDWStageSubsystem::LoadStage(TSubclassOf<UStageData> NewStageData)
 	if (DWStageData->StageDatas.Find(NewStageData) == INDEX_NONE)
 		return;
 
+	BeforeStageData = CurrentStageData;
+
 	CurrentStageData = NewObject<UStageData>(this, NewStageData);
 	
 	FName DestinationLevel = CurrentStageData->StageName;
 	FLatentActionInfo LatentActionInfo;
 	LatentActionInfo.CallbackTarget = this;
+	LatentActionInfo.UUID = AID_Loading;
+	LatentActionInfo.Linkage = LID_Link;
 	LatentActionInfo.ExecutionFunction = FName(TEXT("OnStreamLevelLoaded"));
 
 	UGameplayStatics::LoadStreamLevel(this, DestinationLevel, true, false, LatentActionInfo);
@@ -95,6 +99,7 @@ void UDWStageSubsystem::LoadNextStageData()
 	{
 		PrevData->Clear();
 	}
+
 	CurrentStageIndex++;
 	CurrentStageData = NewObject<UStageData>(this, StageDatas[CurrentStageIndex]);
 	OnStageChanged.Broadcast(CurrentStageData, PrevData);
@@ -105,6 +110,11 @@ void UDWStageSubsystem::OnStreamLevelLoaded()
 	FTimerHandle WaitHandle;
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			UGameplayStatics::UnloadStreamLevel(this, "StartMap", FLatentActionInfo(), false);
+			OnStageChanged.Broadcast(CurrentStageData, BeforeStageData);
+			UGameplayStatics::UnloadStreamLevel(this, BeforeStageName, FLatentActionInfo(), false);
+			BeforeStageData = nullptr;
+			OnSuccessStageLoaded.Broadcast();
+			ReadyStage();
 		}), 0.2f, false);
-}
+
+}	

@@ -10,6 +10,7 @@ class UStageData;
 class UDWStageData;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageChanged, UStageData*/* CurrentData */, UStageData*/* PrevData */);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSuccessStageLoaded);
 
 /**
  * 
@@ -51,7 +52,23 @@ protected:
 	void OnStreamLevelLoaded();
 
 public:
+	enum EActionId
+	{
+		AID_Loading,
+	};
+
+	enum ELinkID
+	{
+		LID_Link
+	};
+
 	FOnStageChanged OnStageChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSuccessStageLoaded OnSuccessStageLoaded;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stage)
+	TObjectPtr<UStageData> BeforeStageData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stage)
 	TObjectPtr<UStageData> CurrentStageData;
@@ -62,6 +79,9 @@ public:
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UDWStageData> DefaultStageDataClass;
 	 
-
 	int32 CurrentStageIndex = -1;
+
+protected:
+	UPROPERTY()
+	FName BeforeStageName = "StartMap";
 };
