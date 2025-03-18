@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Quest)
 	TArray<TSubclassOf<UQuestDefinition>> Quests;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataLayer)
+	TSoftObjectPtr<UDataLayerAsset> StageDataLayer;
+
 	EStageState StageState = EStageState::Ready;
 
 	FOnStageStateChanged OnReady;
