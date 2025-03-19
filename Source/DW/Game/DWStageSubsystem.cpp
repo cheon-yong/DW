@@ -4,7 +4,8 @@
 #include "Game/DWStageSubsystem.h"
 
 #include "Game/DWStageData.h"
-#include <Kismet/GameplayStatics.h>
+#include "Kismet/GameplayStatics.h"
+#include "WorldPartition/DataLayer/DataLayerManager.h"
 
 
 UDWStageSubsystem::UDWStageSubsystem()
@@ -49,15 +50,23 @@ void UDWStageSubsystem::LoadStage(TSubclassOf<UStageData> NewStageData)
 	BeforeStageData = CurrentStageData;
 
 	CurrentStageData = NewObject<UStageData>(this, NewStageData);
-	
-	FName DestinationLevel = CurrentStageData->StageName;
+
+	// Data Layer Load
+	TSoftObjectPtr<UDataLayerAsset> DataLayer = CurrentStageData->StageDataLayer;
+	UDataLayerManager* DataLayerManager = UDataLayerManager::GetDataLayerManager(GetWorld());
+	DataLayerManager->SetDataLayerRuntimeState(DataLayer.Get(), EDataLayerRuntimeState::Activated);
+
+	// 전통적인 스타일의 레벨 로드
+	/*FName DestinationLevel = CurrentStageData->StageName;
 	FLatentActionInfo LatentActionInfo;
 	LatentActionInfo.CallbackTarget = this;
 	LatentActionInfo.UUID = AID_Loading;
 	LatentActionInfo.Linkage = LID_Link;
 	LatentActionInfo.ExecutionFunction = FName(TEXT("OnStreamLevelLoaded"));
 
-	UGameplayStatics::LoadStreamLevel(this, DestinationLevel, true, false, LatentActionInfo);
+	UGameplayStatics::LoadStreamLevel(this, DestinationLevel, true, false, LatentActionInfo);*/
+
+
 }
 UE_ENABLE_OPTIMIZATION
 
