@@ -56,7 +56,6 @@ public:
 	FOnStageStateChanged OnFail;
 
 	FOnStageStateChanged OnComplete;
-	
 };
 
 /**
