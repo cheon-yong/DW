@@ -56,7 +56,10 @@ void UDWStageSubsystem::LoadStage(TSubclassOf<UStageData> NewStageData)
 	UDataLayerManager* DataLayerManager = UDataLayerManager::GetDataLayerManager(GetWorld());
 	DataLayerManager->SetDataLayerRuntimeState(DataLayer.Get(), EDataLayerRuntimeState::Activated);
 
-
+	OnStageChanged.Broadcast(CurrentStageData, BeforeStageData);
+	BeforeStageData = nullptr;
+	OnSuccessStageLoaded.Broadcast();
+	ReadyStage();
 
 	// 전통적인 스타일의 레벨 로드
 	/*FName DestinationLevel = CurrentStageData->StageName;
